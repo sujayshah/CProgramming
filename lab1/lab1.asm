@@ -22,7 +22,7 @@ CHECKRANGE ADD R2, R4, #-16
            ADD R2, R4, #-16 
            ADD R2, R4, #-9  ; subtract total of 57 (9) from digit to check if it is in range
            BRnz CONVERT
-           ADD R4, R4, R6   ; if number is out of range then add 'A' (x1010?)
+           ADD R4, R4, R6   ; if number is out of range then add 'A'
            TRAP x21         ; display
            ADD R0, R0, #1   ; increment digit counter
            BR DIGCHECK      ; check back for number of digits displayed so far
