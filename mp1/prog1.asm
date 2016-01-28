@@ -98,9 +98,97 @@ GET_NEXT
 
 PRINT_HIST
 
-; you will need to insert your code to print the histogram here
+      AND R6, R6, x0000
+
+        PRINT_LOOP
+
+                LD R3, HIST_ADDR                       
+                ADD R3, R3, R6
+
+                LD R5, HIST_ADDR
+                ADD R5, R5, R6
+                LDR R3, R5, x0000
+
+                LD R0, AT
+                ADD R0, R0, R6  
+                OUT
+
+                LD R0, SPACE
+                OUT              
+
+                  HEX_LOOP
+
+                        AND R3, R3, #0                   ; reset r3 and r4 to zero so as to not conflict with values from previous segment
+                        AND R4, R4, #0
+
+			LD R4, DIGITS
+
+			AND R0, R0, #0                    ; initialise output register to 0
+			AND R5, R5, #0                    ; initialise digit counter to 0 
+			AND R1, R1, #0                    ; initialise bit counter to 0
+			AND R2, R2, #0                    ; initialise r2 to 0 (will be used to check how many digits we have)
+
+			DIGCHECK      ADD R2, R5, #-4     ; check if we have 4 digits yet by subtracting this from digit counter
+				      BRn BITCOUNT        ; move to bitcount if we do not
+
+			FINISHED      BR CONVERTED        ; escape the loop
+
+			BITCOUNT      ADD R1, R1, #-4     ; check if we have all the bits in the same way we checked for digits 
+				      BRn SHIFTLEFT       ; shift r4 left if we do not have all bits
+
+			CHECKRANGE    ADD R4, R4, #-10    ; subtract total of 10 from digit to check if it is in range
+				      BRn CONVERT
+				      ADD R4, R4, #15
+				      ADD R4, R4, #15
+				      ADD R4, R4, #15
+				      ADD R4, R4, #15
+				      ADD R4, R4, #5      ; if number is out of range then add 'A' (x0041 or decimal 65)
+				      ADD R0, R4, #0      ; copy the output digit to r0 
+				      TRAP x21            ; display
+				      ADD R5, R5, #1      ; increment digit counter
+				      AND R4, R4, #0      ; reset r4 to 0
+				      BR DIGCHECK         ; check back for number of digits displayed so far
+
+			CONVERT       ADD R4, R4, #10     ; add back the 10 that was removed earlier before adding offset
+				      ADD R4, R4, #15
+				      ADD R4, R4, #15
+				      ADD R4, R4, #15
+				      ADD R4, R4, #3       ; number in range so add '0' (x0030 or decimal 48)
+				      ADD R0, R4, #0       
+				      TRAP x21
+				      ADD R5, R5, #1
+				      AND R4, R4, #0           
+				      BR DIGCHECK       
+
+			SHIFTLEFT     ADD R1, R1, #4      ; add back the 4 that was subtracted to check if we have correct number of bits
+				      ADD R4, R4, R4      ; shift r4 left to make room for incoming bit
+
+			DATAMSB       AND R3, R3, R3      ; check the MSB of r3
+				      BRn INCDIGITS       ; if it is a 1, add 1 to r4
+				      ADD R4, R4, #0      ; else add zero to r4
+				      BR SHIFTDATALEFT    ; shift r3 left
+			  
+			INCDIGITS     ADD R4, R4, #1        
+
+			SHIFTDATALEFT ADD R3, R3, R3
+				      ADD R1, R1, #1      ; increment bit counter
+				      BR BITCOUNT         ; go back to check if bitcount is <= 4        
 
 
+                        CONVERTED                         ; continue through programme
+                        
+
+                AND R0, R0, x0000                         
+                ADD R0, R0, #10                           ; output new line
+                OUT
+
+                ADD R6, R6, #1                            ; increment line count
+
+                AND R1, R1, #0                             
+                LD R1, NEG_NUM_BINS                     
+
+                ADD R1, R1, R6                            ; check how many iterations are done
+                BRn PRINT_LOOP                            ; if negative, there are still more lines to print so loop back
 
 DONE	HALT			; done
 
@@ -112,9 +200,12 @@ AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
+DIGITS          .FILL x0000     ; MSB from r3 will be moved to LSB of this location 
+NEG_NUM_BINS    .FILL xFFE5     ; used to count how many iterations have already been done
+SPACE           .FILL #32       ; decimal value to output space
+AT              .FILL #64       ; decimal value to output non-alpha symbol
 
-; for testing, you can use the lines below to include the string in this
-; program...
+; for testing, you can use the lines below to include the string in this program...
 ; STR_START	.FILL STRING	; string starting address
 ; STRING		.STRINGZ "This is a test of the counting frequency code.  AbCd...WxYz."
 
