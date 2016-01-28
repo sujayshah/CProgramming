@@ -94,31 +94,33 @@ GET_NEXT
 	ADD R1,R1,#1		; point to next character in string
 	BRnzp COUNTLOOP		; go to start of counting loop
 
-
+; ---------------
+; INTRO PARAGRAPH
+; ---------------
+; My code below prints out a histogram displaying each character in a string alongside it's number of occurences. The main part of my code was developed from the lab1 exercise, which outputs a    
+; hexadecimal number from a series of bits. This code is contained within a loop that prints the letter for which the frequency is being displayed. It is also used to keep track of the number of
+; iterations through the inner loop so that each time one frequency is printed, the counter increments in order to print and convert the frequency for the next character. The outermost loop is 
+; simply used to initialise the counter to zero at the very beginning.
 
 PRINT_HIST
 
-      AND R6, R6, x0000
+      AND R6, R6, x0000                                 ; initialise the line count to 0 
 
         PRINT_LOOP
 
-                LD R3, HIST_ADDR                       
-                ADD R3, R3, R6
+                LD R3, HIST_ADDR                         ; load starting address of frequency count into r3 for conversion 
+                ADD R3, R3, R6                           ; add r6, which will keep getting incremented as we loop to give frequencies for a, b...
+                LDR R3, R3, x0000     
 
-                LD R5, HIST_ADDR
-                ADD R5, R5, R6
-                LDR R3, R5, x0000
-
-                LD R0, AT
-                ADD R0, R0, R6  
+                LD R0, AT                                ; load decimal value for @ into output register 
+                ADD R0, R0, R6                           ; add current line count
                 OUT
 
-                LD R0, SPACE
+                LD R0, SPACE                             ; output space to go before frequency is printed
                 OUT              
 
-                  HEX_LOOP
+                  ASCII_LOOP
 
-                        AND R3, R3, #0                   ; reset r3 and r4 to zero so as to not conflict with values from previous segment
                         AND R4, R4, #0
 
 			LD R4, DIGITS
@@ -202,8 +204,8 @@ HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
 DIGITS          .FILL x0000     ; MSB from r3 will be moved to LSB of this location 
 NEG_NUM_BINS    .FILL xFFE5     ; used to count how many iterations have already been done
-SPACE           .FILL #32       ; decimal value to output space
-AT              .FILL #64       ; decimal value to output non-alpha symbol
+SPACE           .FILL #32       ; corresponding decimal for space
+AT              .FILL #64       ; corresponding decimal for @
 
 ; for testing, you can use the lines below to include the string in this program...
 ; STR_START	.FILL STRING	; string starting address
