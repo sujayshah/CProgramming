@@ -1,4 +1,12 @@
 ;Assuming user will only enter ' ' 0-9 *+/-
+;----------------------
+;INTRODUCTORY PARAGRAPH
+;----------------------
+;The following code is used to implement some basic calculator operations using the stack in LC-3 Assembly. The available functions are addition, subtraction, multiplication, division and power. The user must provide an input
+;expression in postfix notation. When an operand is identified, it is pushed onto the stack. When an operator is identified, two values are popped from the stack. If the input expression causes an error, either because there was an
+;invalid input character or because two values could not be popped from the stack following detection of an operator, an error message is printed and the programme halts. Otherwise, it continues by accessing the relevant subroutine
+;to perform the computation for each operator on its operands. The result of each operation is pushed back onto the stack until there are no longer any operations to perform. The final result is then popped and stored in R6 and printed 
+;to the console in hexadecimal format.
 
 .ORIG x3000
 	
@@ -266,6 +274,16 @@ SUBTRACTION
 ;input R3, R4
 ;out R0
 MULTIPLICATION	
+	AND R1, R1, #0 			    ;check if either of the values to be multiplied are zero
+	NOT R1, R1
+	ADD R1, R1, #1
+	ADD R1, R4, R1
+	BRz ZEROIN		            ;set result to zero and push onto stack if one of the inputs is zero
+   	AND R1, R1, #0   		    ;check if either of the values to be multiplied are zero
+	NOT R1, R1
+	ADD R1, R1, #1
+	ADD R1, R3, R1
+	BRz ZEROIN	
 	AND R0, R0, #0
         MULTLOOP
         	ADD R0, R0, R4              ;keep adding second value to itself and store result in r0
@@ -273,6 +291,10 @@ MULTIPLICATION
                 BRp MULTLOOP                ;break from loop once value 2 has been added to it self value 1 times
         JSR PUSH
         JSR GETCHAR
+	ZEROIN
+		AND R0, R0, #0
+		JSR PUSH
+		JSR GETCHAR
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
@@ -281,6 +303,7 @@ DIVISION
         AND R1, R1, #0
 	NOT R4, R4
 	ADD R4, R4, #1
+	AND R2, R2, #0
         DIVLOOP
         	ADD R1, R1, R3               ;add denominator to itself until numerator value is reached or exceeded
                 ADD R0, R0, #1               ;increment counter to keep track of number of additions, as this will be the final result
@@ -292,9 +315,43 @@ DIVISION
 ;input R3, R4
 ;out R0
 POWER
-;your code goes here
-	
-
+	AND R1, R1, #0
+	NOT R1, R1
+	ADD R1, R1, #1
+	ADD R1, R3, R1
+	BRz EXPZERO                           ;check if the exponent is zero
+        AND R1, R1, #0
+	ADD R1, R1, #-1
+	ADD R1, R3, R1
+	BRz EXPONE                            ;check if the exponent is one
+	EXPLOOP
+		AND R1, R1, #0
+		ADD R1, R1, R4		      ;will be used as a counter for multloop
+		AND R2, R2, #0
+		ADD R2, R2, #1		      ;will be used to count number of multiplications (external counter)
+		AND R5, R5, #0
+		NOT R3, R3
+		ADD R3, R3, #1		      ;negate exponent to keep track of how many times a number has been multiplied
+		AND R0, R0, #0			
+		INNERLOOP		
+			ADD R0, R0, R4             
+                	ADD R1, R1, #-1             
+                	BRp INNERLOOP         ;modified version of mult loop
+		ADD R2, R2, #1                ;increment external counter
+		ADD R5, R2, R3
+		BRn INNERLOOP
+		JSR PUSH
+		JSR GETCHAR 
+	EXPZERO
+		AND R0, R0, #0
+		ADD R0, R0, #1                ;if the exponent is zero, return 1
+		JSR PUSH
+		JSR GETCHAR
+	EXPONE
+		AND R0, R0, #0
+		ADD R0, R0, R4
+		JSR PUSH
+		JSR GETCHAR		      ;if the exponent is one, return base
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
 ;
