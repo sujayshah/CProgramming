@@ -1,24 +1,55 @@
 ;number to print in decimal is in R3.
 ;it will be positive.
 .ORIG x3000
+	
+LD R3, R3VAL		;loading for testing
+AND R4, R4, #0		;clear r4
+ADD R4, R4, #10 	;set r4 to 10	
 
+MAINLOOP 
+	JSR DIV
+	AND R3, R3, #0
+	ADD R3, R3, R0		;copy new quotient back into r3
+	AND R0, R0, #0		
+	ADD R0, R0, R1		;copy remainder into r1
+	JSR PUSH		;push remainder onto stack
+	ADD R3, R3, #0
+	BRp MAINLOOP		;if quotient is greater than zero, divide by 10 again
+	LD R1, ASCII_0          ;load ASCII offset into r1
+	
+POPLOOP                         
+	JSR POP                 ;begin popping remainders
+  	AND R2, R2, #0
+        ADD R2, R2, R5          ;copy errorcode into r2
+	BRp DONE                ;nothing left in stack so done
+	ADD R0, R0, R1          ;otherwise add that ASCII value
+	OUT
+	JSR POPLOOP	
+	
+DONE
+	HALT
 
-
-
-
-
-
-
-
-
-
-
-
+R3VAL .FILL x0078               ;use decimal 120 for testing
 ASCII_0 .FILL x30
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0-quotient, R1-remainder
 DIV	
+	AND R0, R0, #0          ;clear r0
+	AND R1, R1, #0          ;clear r1
+	ADD R1, R1, R3 		;set r1 equal to r3
+   	NOT R4, R4
+	ADD R4, R4, #1		;negate r4	
+DIVLOOP 
+	ADD R0, R0, #1		;increase quotient
+	ADD R1, R1, R4		;subtraction
+	BRzp DIVLOOP
+	ADD R0, R0, #-1		;qout-1
+	NOT R4, R4
+	ADD R4, R4, #1          ;make r4 positive again
+	ADD R1, R4, R1		;add r4 to r1
 	RET
 
 
