@@ -1,0 +1,21 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	INPUT             3002
+//	VALIDATE          3019
+//	GRZERO            3025
+//	LENINE            3027
+//	INVALID           302A
+//	VALID             302D
+//	DONE              3030
+//	KBSR              3031
+//	KBDR              3032
+//	DSR               3033
+//	DDR               3034
+//	NUM               3035
+//	ASCII_0           3036
+//	SPACE             3037
+//	INV_MSG           3038
+//	VAL_MSG           304E
+

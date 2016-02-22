@@ -1,0 +1,10 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	REVERSE           3005
+//	SWAPMEM           300D
+//	DONE              300D
+//	NUM_ADDR          300E
+//	CHAR_ADDR         300F
+

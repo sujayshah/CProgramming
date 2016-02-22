@@ -1,0 +1,8 @@
+Problem 1 Comments\n
+Uses GETC and wrong validity check
+Problem 2 Comments\n
+perfect
+Problem 3 Comments\n
+No code for SWAPMEM (0/10). No JSR or RET commands for subroutines. Partial credit: Loads length (3) Gets end (2), Increment/Decrement (2) loop around (2)
+Problem 4 Comments\n
+no expl on 1

@@ -1,0 +1,14 @@
+Record your answers here for Problem 4.
+Please limit each answer to no more than 3 sentences.
+
+
+1.
+
+16-bits.
+
+
+2.
+
+Instead of moving data, we use pointers to memory addresses that hold data (unlike a standard hardware implementation). The last element to be pushed onto the stack is the first one that gets removed through a pop (LIFO). Taking the 
+difference between stack pointers will also help us determine if we have overflow or underflow.
+
