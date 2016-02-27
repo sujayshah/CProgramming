@@ -7,5 +7,32 @@
  * If it is not a triple but it is a dobule, print "Double!\n"
  * Otherwise print "\n"
  */
+#include <stdio.h>
+#include "dice.h"
+#include <stdlib.h>
 
+int main()
+{
+	int seed;
+	printf("Enter seed:\n");
+	scanf("%d", &seed);
+	srand(seed);
 
+	int x, y, z;
+	roll_three(&x, &y, &z);
+	printf("%d %d %d", x, y, z);
+
+	if ((x==y) && (y==z))
+	{
+		printf(" Triple!\n");
+	}
+	else if((x==y)||(y==z)||(x==z))
+	{
+		printf(" Double!\n");
+	}
+	else
+	{
+		printf("\n");
+	}
+	return 0;
+}
