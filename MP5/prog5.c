@@ -11,7 +11,16 @@
  * in this file to help you get started.
  */
 
-
+/*
+ * INTRODUCTORY PARAGRAPH
+ * ----------------------
+ * The following code is used to play the codebreaker game. The user enters a seed which generates a random sequence of four numbers. They are then given 12 attempts
+ * to guess the correct solution. After making each guess the user is told how many perfect and imperfect matches they got so that they can use this information to 
+ * improve upon their prior guess. 
+ * The 'set seed' function within this code simply checks if the entered seed is valid and proceeds accordingly. The 'start game' function generates the random 
+ * sequence. Finally, the 'make guess' function allows the user to enter an input of 4 integers. It then checks the validity of this input and, if it is valid,
+ * compares this to the actual sequence to provide feedback on the matches.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
