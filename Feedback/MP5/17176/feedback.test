@@ -1,0 +1,1 @@
+When a guess peg is counted as a mismatch, did you do something to prevent it from counting again? A single guess peg should only be paired with one solution peg, either as a perfect match or as a mismatch. 
