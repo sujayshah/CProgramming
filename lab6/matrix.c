@@ -7,7 +7,24 @@
  * OUTPUT: matrixC, a one dimensional double array of size m*n
  */
 void matrix_multiply(double *matrixA, double *matrixB, double *matrixC, int m, int k, int n)
-{ 
-//YOUR CODE HERE
+{
+	int loca, locb, locc;	
+	int i, j, l;
+
+	for(i = 0; i < m; i++)
+	{
+		for(j = 0; j < n; j++)
+		{
+			for(l = 0; l < k; l++) 
+			{
+				loca = i*k + l; 
+				locb = l*n + j; 
+				locc = i*n + j; 
+				matrixC[locc] += matrixA[loca]*matrixB[locb];
+			}
+	
+		}
+	
+	}
 }
 
