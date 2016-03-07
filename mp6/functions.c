@@ -1,6 +1,16 @@
 #include "imageData.h"
 #include "functions.h"
 
+/*
+ * INTRODUCTORY PARAGRAPH
+ * ----------------------
+ * The functions below implement various image manipulation techniques including: grayscale conversion; translations and blurring. In each case, the RGBA values for each pixel of the input image
+ * have been stored into separate arrays on which the following operations are performed. The grayscale function works by multiplying each of these values with their respective weights and
+ * summing them together to get a grayscale value for each pixel. The colour threshold checks the RGBA components of each pixel against respective threshold values. If each of them exceed the
+ * threshold, the pixel remains unchanged from its input. Otherwise, it is set to black. The flip vertical function simply switches all the rows of the input image pixels, whilst keeping the 
+ * columns fixed. Finally, blurring is carried out by first designing a filter using a mathematical equation. This filter is then applied to the input image, where the output pixel is equal to
+ * the weighted sum of its surrounding pixels upon application of the filter.
+ */  
 
 
 /*
@@ -66,8 +76,10 @@ void convolve_image(uint8_t *in_red,uint8_t *in_green,uint8_t *in_blue,
                    int radius,int width,int height)
 {
 	int a, b, c, d, i, j, k, x, y, area ,length;
-	double in_sum_red, out_sum_red, in_sum_green, out_sum_green, in_sum_blue, out_sum_blue;
-	in_sum_red = out_sum_red = in_sum_green = out_sum_green = in_sum_blue = out_sum_blue = 0;	
+	double in_sum_red, in_sum_green, in_sum_blue;
+	in_sum_red = 0.0;
+	in_sum_green = 0.0;
+	in_sum_blue = 0.0;	
 	area = width*height;
 	length = 2*radius + 1;
 
@@ -81,8 +93,9 @@ void convolve_image(uint8_t *in_red,uint8_t *in_green,uint8_t *in_blue,
 			out_blue[k] = in_blue[k];
 			out_alpha[k] = in_alpha[k];
 		}
+		return;
 	}
-	
+
 	for(y = 0; y < height; y++)
 	{
 		for(x = 0; x < width; x++)
@@ -98,13 +111,14 @@ void convolve_image(uint8_t *in_red,uint8_t *in_green,uint8_t *in_blue,
 
 					if(c < 0 || c > width-1 || d < 0 || d > height-1)
 					{
-						c = d = 0;
+						c = 0;
+						d = 0;
 					}
 					else
 					{
-						in_sum_red = in_sum_red + filter[b*length + a]*in_red[d*length + c];
-						in_sum_green = in_sum_green + filter[b*length + a]*in_red[d*length + c];
-						in_sum_blue = in_sum_blue + filter[b*length + a]*in_red[d*length + c];						
+						in_sum_red = in_sum_red + filter[b*length + a]*in_red[d*width + c];
+						in_sum_green = in_sum_green + filter[b*length + a]*in_green[d*width + c];
+						in_sum_blue = in_sum_blue + filter[b*length + a]*in_blue[d*width + c];						
 					}
 				}
 				//out_sum_red = out_sum_red + in_sum_red;
@@ -115,6 +129,9 @@ void convolve_image(uint8_t *in_red,uint8_t *in_green,uint8_t *in_blue,
 			out_green[y*width + x] = in_sum_green;
 			out_blue[y*width + x] = in_sum_blue;
 			out_alpha[y*width + x] = in_alpha[y*width + x];
+			in_sum_red = 0.0;
+			in_sum_green = 0.0;
+			in_sum_blue = 0.0;
 		}
 	}						
 }
