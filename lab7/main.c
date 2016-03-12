@@ -72,8 +72,22 @@ void backtracking( unsigned int index, int chosen[N], unsigned int permutation[N
 		/* If a permutation is enumerated, use print_permutation to print it. Don't modify this */
 		print_permutation( permutation );
 	}
-	else{
-		// Your code goes here
+	else
+	{
+		int i;
+
+		for(i = 0; i < N; i++)
+		{
+			if(chosen[i] != 1) //checks if number has already been printed
+			{
+				permutation[index] = i + 1;                   //stores the number for printing
+				chosen[i] = 1;                                //sets flag to indicate that current number cannot be reused
+				backtracking(index + 1, chosen, permutation); //move to the next position to be printed
+				//backtracking
+				permutation[index] = 0;
+				chosen[i] = 0;
+			}
+		}		
 	}
 	
 }
