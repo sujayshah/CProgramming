@@ -1,0 +1,1 @@
+sudoku incorrect: execution out of time. It is usually caused because your algorithm is not optimized. For example you loop through the game board multiple times, or not breaking out the loop when finding empty place. Your code may not be efficient enough.
