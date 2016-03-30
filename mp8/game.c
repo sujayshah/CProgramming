@@ -1,5 +1,13 @@
 #include "game.h"
 
+/* INRTODUCTORY PARAGRAPH
+ * ----------------------
+ * This code provides an implementation of the 2048 game through a combination of functions. The 'make' function creates a new board with a set number of rows and columns defined by the user, by 
+ * initialising the members of a pre-defined structure. The score is set to zero and all of the cells have an initial value of -1 to indicate null. The 'remake' function is very similar and 
+ * involves reinitialising members of the old structure. Additionally, there are four functions to slide the cells in a given direction, which corresponds to either 'w', 'a', 's', or 'd' on the
+ * keyboard. These functions also combine adjacent cells with the same value in the specified direction and subsequently update the score. Finally, the 'legal move check' function checks if any
+ * remaining moves are available by checking for empty cells and/or adjacent cells with the same values.
+*/  
 
 game * make_game(int rows, int cols)
 /*! Create an instance of a game structure with the given number of rows
@@ -9,14 +17,20 @@ game * make_game(int rows, int cols)
     of functions.
 */
 {
-    //Dynamically allocate memory for game and cells (DO NOT modify this)
-    game * mygame = malloc(sizeof(game));
-    mygame->cells = malloc(rows*cols*sizeof(cell));
+	//Dynamically allocate memory for game and cells (DO NOT modify this)
+	game * mygame = malloc(sizeof(game));
+	mygame->cells = malloc(rows*cols*sizeof(cell));
+	
+	mygame->rows = rows;
+	mygame->cols = cols;
+	mygame->score = 0;
+	
+	for(int x = 0; x < rows*cols; x++)
+	{
+		mygame->cells[x] = -1;
+	} 
 
-    //YOUR CODE STARTS HERE:  Initialize all other variables in game struct
-
-
-    return mygame;
+	return mygame;
 }
 
 void remake_game(game ** _cur_game_ptr,int new_rows,int new_cols)
@@ -31,7 +45,14 @@ void remake_game(game ** _cur_game_ptr,int new_rows,int new_cols)
 	free((*_cur_game_ptr)->cells);
 	(*_cur_game_ptr)->cells = malloc(new_rows*new_cols*sizeof(cell));
 
-	 //YOUR CODE STARTS HERE:  Re-initialize all other variables in game struct
+	(*_cur_game_ptr)->rows = new_rows;
+	(*_cur_game_ptr)->cols = new_cols;
+	(*_cur_game_ptr)-> score = 0;
+
+	for(int x = 0; x < new_rows*new_cols; x++)
+	{
+		(*_cur_game_ptr)->cells[x] = -1;
+	} 
 
 	return;	
 }
@@ -53,9 +74,22 @@ cell * get_cell(game * cur_game, int row, int col)
 	if the row and col coordinates do not exist.
 */
 {
-    //YOUR CODE STARTS HERE
+	int rows, cols;
 
-    return NULL;
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
+		
+	cell *ptr;
+	
+	if(row < 0 || col < 0 || row*cols + col < 0 || row*cols + col >= rows*cols)
+	{
+		return NULL;
+	}
+	else
+	{
+		ptr = &(cur_game->cells[row*cols + col]);
+		return ptr;
+	}
 }
 
 int move_w(game * cur_game)
@@ -65,31 +99,244 @@ int move_w(game * cur_game)
    not merge twice in one turn. If sliding the tiles up does not cause any 
    cell to change value, w is an invalid move and return 0. Otherwise, return 1. 
 */
-{
-    //YOUR CODE STARTS HERE
+{	
+	int i, j, rows, cols;
+	int flag = 0; //used to indicate if sliding has caused any values to change
 
-    return 1;
-};
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
+
+	for(i = 0; i < cols; i++)
+	{
+
+		int l = -1; //initialises last combined row
+
+		for(j = 1; j < rows; j++) //first spot doesn't need to be moved as it's already at the top
+		{
+			if(cur_game->cells[j*cols + i] != -1) 
+			{
+				int k = 0;
+				
+				while(k < j)
+				{
+					if(cur_game->cells[k*cols + i] == -1)
+					{
+						break;
+					}
+					k++;
+				}
+
+				if(k < j) //move stuff
+				{
+					cur_game->cells[k*cols + i] = cur_game->cells[j*cols + i];
+					cur_game->cells[j*cols + i] = -1; //clear it
+					flag = 1;
+				}
+
+				if(k-1 != l)
+				{
+					if(cur_game->cells[(k-1)*cols + i] == cur_game->cells[k*cols + i])
+					{
+						cur_game->cells[(k-1)*cols + i] += cur_game->cells[k*cols + i];
+						cur_game->cells[k*cols + i] = -1;
+						cur_game->score += cur_game->cells[(k-1)*cols + i];
+						l = k-1;
+						flag = 1; // a cell has changed value
+					} 
+				} 
+			}
+		}
+	}
+
+	if(flag == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
 
 int move_s(game * cur_game) //slide down
 {
-    //YOUR CODE STARTS HERE
+	int i, j, rows, cols;
+	int flag = 0; //used to indicate if sliding has caused any values to change
 
-    return 1;
-};
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
+
+	for(i = 0; i < cols; i++)
+	{
+
+		int l = -1; //initialises last combined row
+
+		for(j = rows-1; j >= 0; j--) 
+		{
+			if(cur_game->cells[j*cols + i] != -1)
+			{
+				int k = rows-1;
+				
+				while(k > j)
+				{
+					if(cur_game->cells[k*cols + i] == -1)
+					{
+						break;
+					}
+					k--;
+				}
+
+				if(k > j) //move stuff
+				{
+					cur_game->cells[k*cols + i] = cur_game->cells[j*cols + i];
+					cur_game->cells[j*cols + i] = -1; //clear it
+					flag = 1;
+				}
+
+				if(k+1 != l)
+				{
+					if(cur_game->cells[(k+1)*cols + i] == cur_game->cells[k*cols + i])
+					{
+						cur_game->cells[(k+1)*cols + i] += cur_game->cells[k*cols + i];
+						cur_game->cells[k*cols + i] = -1;
+						cur_game->score += cur_game->cells[(k+1)*cols + i];
+						l = k+1;
+						flag = 1; // a cell has changed value
+					} 
+				} 
+			}
+		}
+	}
+
+	if(flag == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
 
 int move_a(game * cur_game) //slide left
 {
-    //YOUR CODE STARTS HERE
+	int i, j, rows, cols;
+	int flag = 0; //used to indicate if sliding has caused any values to change
 
-    return 1;
-};
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
 
-int move_d(game * cur_game){ //slide to the right
-    //YOUR CODE STARTS HERE
+	for(i = 0; i < rows; i++)
+	{
 
-    return 1;
-};
+		int l = -1; //initialises last combined column
+
+		for(j = 1; j < cols; j++) //first spot doesn't need to be moved as it's already in the left-most position
+		{
+			if(cur_game->cells[i*cols + j] != -1)
+			{
+				int k = 0;
+				
+				while(k < j)
+				{
+					if(cur_game->cells[i*cols + k] == -1)
+					{
+						break;
+					}
+					k++;
+				}
+
+				if(k < j) //move stuff
+				{
+					cur_game->cells[i*cols + k] = cur_game->cells[i*cols + j]; 
+					cur_game->cells[i*cols + j] = -1; //clear it
+					flag = 1;
+				}
+
+				if(k-1 != l) 
+				{
+					if(cur_game->cells[i*cols + (k-1)] == cur_game->cells[i*cols + k]) 
+					{
+						cur_game->cells[i*cols + (k-1)] += cur_game->cells[i*cols + k];
+						cur_game->cells[i*cols + k] = -1;
+						cur_game->score += cur_game->cells[i*cols + (k-1)];
+						l = k-1;
+						flag = 1; // a cell has changed value
+					} 
+				} 
+			}
+		}
+	}
+
+	if(flag == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+int move_d(game * cur_game) //slide to the right
+{
+	int i, j, rows, cols;
+	int flag = 0; //used to indicate if sliding has caused any values to change
+
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
+
+	for(i = 0; i < rows; i++)
+	{
+
+		int l = -1; //initialises last combined column
+
+		for(j = cols-1; j >= 0; j--) 
+		{
+			if(cur_game->cells[i*cols + j] != -1)
+			{
+				int k = cols-1;
+				
+				while(k > j)
+				{
+					if(cur_game->cells[i*cols + k] == -1)
+					{
+						break;
+					}
+					k--;
+				}
+
+				if(k > j) //move stuff
+				{
+					cur_game->cells[i*cols + k] = cur_game->cells[i*cols + j];
+					cur_game->cells[i*cols + j] = -1; //clear it
+					flag = 1;
+				}
+
+				if(k+1 != l)
+				{
+					if(cur_game->cells[i*cols + (k+1)] == cur_game->cells[i*cols + k])
+					{
+						cur_game->cells[i*cols + (k+1)] += cur_game->cells[i*cols + k];
+						cur_game->cells[i*cols + k] = -1;
+						cur_game->score += cur_game->cells[i*cols + (k+1)];
+						l = k+1;
+						flag = 1; // a cell has changed value
+					} 
+				} 
+			}
+		}
+	}
+
+	if(flag == 0)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
 
 int legal_move_check(game * cur_game)
 /*! Given the current game check if there are any legal moves on the board. There are
@@ -97,9 +344,76 @@ int legal_move_check(game * cur_game)
 	Return 1 if there are possible legal moves, 0 if there are none.
  */
 {
-    //YOUR CODE STARTS HERE
+	int i, j, rows, cols;
 
-    return 1;
+	rows = cur_game -> rows;
+	cols = cur_game -> cols;
+
+	for(i = 0; i < rows; i++)
+	{
+		for(j = 0; j < cols; j++)
+		{
+			int a, b, c, d, x;
+			
+			a = i + 1;
+			b = i - 1;
+			c = j + 1;
+			d = j - 1;				
+
+			if(cur_game->cells[i*cols + j] == -1)
+			{
+				return 1;
+			}
+
+			if(a > rows*cols) //checks for out of bounds exception
+			{
+				x = 0; //do nothing
+			}
+			else
+			{
+				if(cur_game->cells[a*cols + j] == cur_game->cells[i*cols + j]) //check if cell below is identical
+				{
+					return 1;
+				}
+			}
+			
+			if(b < 0)
+			{
+				x = 0;
+			}
+			else
+			{
+				if(cur_game->cells[b*cols + j] == cur_game->cells[i*cols + j]) //checks cell above
+				{
+					return 1;
+				}
+			}	
+			if(c > rows*cols)
+			{
+				x = 0;
+			}
+			else
+			{
+				if(cur_game->cells[i*cols + c] == cur_game->cells[i*cols + j]) //checks cell to the right
+				{
+					return 1;
+				}
+			}
+
+			if(d < 0)
+			{
+				x = 0;
+			}
+			else
+			{
+				if(cur_game->cells[i*cols + d] == cur_game->cells[i*cols + j]) //checks cell to the left
+				{
+					return 1;
+				}
+			}
+		}
+	}
+	return 0; //no empty or matching adjacent cells found
 }
 
 
