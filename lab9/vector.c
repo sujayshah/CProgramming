@@ -45,7 +45,7 @@ int pop_back(vector_t * vector)
 
 int access(vector_t * vector, int index)
 {
-	if(index < 0 || index > vector->size)
+	if(index < 0 || index >= vector->size)
 	{
 		return 0;
 	}
