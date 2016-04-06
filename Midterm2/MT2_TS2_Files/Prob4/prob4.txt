@@ -1,0 +1,12 @@
+//Record your answers for Problem 4 here
+
+1. What is one advantage of interrupt-driven I/O over polling I/O?
+
+The programme will not stall if no input signal is detected.
+
+
+
+
+2. What is the significance of the function main in C?
+
+The main function can contain code itself and make function calls to execute other pieces of code that are being used in the algorithm. It has a return type of 'int'.

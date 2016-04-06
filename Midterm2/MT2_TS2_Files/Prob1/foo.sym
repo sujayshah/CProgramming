@@ -1,0 +1,10 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	FOO1              301A
+//	FOO2              3023
+//	STACK             3025
+//	X_VAL             3026
+//	Y_VAL             3027
+
