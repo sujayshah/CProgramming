@@ -18,13 +18,39 @@ void printList(node * Node) {
 }
 
 /*Implement this function for Lab 10*/
-void reverse(node** head){
-
+void reverse(node** head)
+{
+	node *c,*p,*n;
+	c = *head;
+	p = NULL;
+	while(c != NULL)
+	{
+		n = c->next;
+		c->next = p;
+		p = c;
+		c = n;
+	}
+	*head = p;
 }
 
 /*Implement this function for Lab 10*/
-void removeDuplicates(node* head){
-
+void removeDuplicates(node* head)
+{
+	node * current;
+	current = head;
+	while(current->next != NULL)
+	{
+		node* temp = current->next;
+		if(temp->data == current->data)
+		{
+			current->next = temp->next;
+			free(temp);
+		}
+		else
+		{
+			current = current->next;
+		}
+	}
 }
 
 int main() {
