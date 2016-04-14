@@ -41,4 +41,6 @@ sp_tuples * mult_tuples(sp_tuples * matA, sp_tuples * matB);
 //free any and all allocated space associated with the given matrix.
 void destroy_tuples(sp_tuples * mat_t);
 
+//counts non-zero elements
+void non_zero(sp_tuples * mat_t);
 
