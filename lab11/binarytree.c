@@ -52,7 +52,23 @@ NODE* create_tree(int a[], int size )
 NODE* lowest_common_ancestor (NODE* root , int first_number , int second_number )
 {
 	/* your code goes here */
+	int smaller, bigger;
 
+	smaller = first_number > second_number ? second_number : first_number;
+	bigger = first_number > second_number ? first_number : second_number;
+
+	if(root->d >= smaller && root->d <= bigger)
+	{
+		return root;
+	}
+	else if(root->d > bigger)
+	{
+		return lowest_common_ancestor(root->left, smaller, bigger);
+	}
+	else
+	{
+		return lowest_common_ancestor(root->right, smaller, bigger);
+	}
 }
 
 
