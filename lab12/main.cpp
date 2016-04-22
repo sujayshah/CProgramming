@@ -46,10 +46,20 @@ int main(int argc,char *argv[])
 *  The rectangle used for storing sumation should be intialized with length and width equal to 0
 *  Use the member function area() to return the calculate and return resulting area 
 */
-int calc_area_of_sum_Rectangle(vector<Rectangle> all_rectangles){
+int calc_area_of_sum_Rectangle(vector<Rectangle> all_rectangles)
+{
 	int number_of_rectangles = all_rectangles.size();
 	//INSERT YOUR CODE HERE:
+	Rectangle sum = Rectangle();
 
+	int i;
+
+	for(i = 0; i < number_of_rectangles; i++)
+	{
+		sum = sum + all_rectangles[i];
+	}
+
+	return sum.area();
 }
 
 /* calc_perimeter_of_product_Rectangle
@@ -57,8 +67,18 @@ int calc_area_of_sum_Rectangle(vector<Rectangle> all_rectangles){
 *  The rectangle used for storing product should be intialized with length and width equal to 0
 *  Use the member function area() to return the calculate and return resulting area 
 */
-int calc_perimeter_of_product_Rectangle(vector<Rectangle> all_rectangles){
+int calc_perimeter_of_product_Rectangle(vector<Rectangle> all_rectangles)
+{
 	int number_of_rectangles = all_rectangles.size();
 	//INSERT YOUR CODE HERE:
+	Rectangle product = Rectangle();
 
+	int i;
+
+	for(i = 0; i < number_of_rectangles; i++)
+	{
+		product = product*all_rectangles[i];
+	}
+
+	return product.perimeter();
 }
